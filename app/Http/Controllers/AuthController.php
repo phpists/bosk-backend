@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Laravel\Passport\Token;
 
 class AuthController extends Controller
 {
@@ -20,10 +21,12 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $user = $request->user();
 
+            $user->tokens->each(function (Token $token) {
+                $token->revoke();
+            });
+
             $tokenResult = $user->createToken('MyAppToken');
             $token = $tokenResult->accessToken;
-
-            Log::info(json_encode($token));
 
             return response()->json(['access_token' => $token], 200);
         }
