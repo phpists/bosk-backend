@@ -34,11 +34,12 @@ class AuthController extends Controller
         return response()->json(['error' => 'Invalid request'], 422);
     }
 
-    public function register(Request $request) {
+    public function register(Request $request)
+    {
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8'],
+            'name' => ['required', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'min:8'],
         ]);
 
         $data['password'] = Hash::make($data['password']);
