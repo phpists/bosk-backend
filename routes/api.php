@@ -14,9 +14,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return response()->json($request->user());
+Route::prefix('/users')->group(function () {
+    Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
+    Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
+    Route::middleware('auth:api')->group( function () {
+        Route::post('/refresh_token', [\App\Http\Controllers\AuthController::class, 'refresh_token']);
+        Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+    });
 });
-
-Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
-Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);

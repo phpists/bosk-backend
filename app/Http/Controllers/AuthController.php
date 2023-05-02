@@ -34,6 +34,19 @@ class AuthController extends Controller
         return response()->json(['error' => 'Invalid request'], 422);
     }
 
+    public function refresh_token(Request $request)
+    {
+        $user = $request->user();
+        $user->tokens->each(function (Token $token) {
+            $token->revoke();
+        });
+        $tokenResult = $user->createToken('MyAppToken');
+        $token = $tokenResult->accessToken;
+
+        return response()->json(['access_token' => $token], 200);
+
+    }
+
     public function register(Request $request) {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
