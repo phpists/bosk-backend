@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+<<<<<<< HEAD
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,3 +23,7 @@ Route::prefix('/users')->group(function () {
         Route::post('/logout', [\App\Http\Controllers\AuthController::class, 'logout']);
     });
 });
+=======
+Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
+Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
+>>>>>>> 50cebde153fda58415e1672cd49ab950560e7d25
