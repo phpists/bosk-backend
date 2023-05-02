@@ -25,9 +25,9 @@ return new class extends Migration
             $table->float("tax");
             $table->float("total");
             $table->string("note");
+            $table->string("status");
             $table->foreignId("customer_id")->constrained("customers");
             $table->foreignId('user_id')->constrained('users');
-            $table->timestamps();
         });
     }
 

@@ -19,8 +19,7 @@ return new class extends Migration
             $table->float('price');
             $table->integer('amount');
             $table->string('unit');
-            $table->float('tax');
-            $table->timestamps();
+            $table->float('tax')->nullable();
         });
     }
 
