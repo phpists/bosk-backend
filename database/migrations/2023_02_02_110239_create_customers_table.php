@@ -27,6 +27,8 @@ return new class extends Migration
             $table->string('province')->nullable();
             $table->string('website')->nullable();
             $table->string('notes')->nullable();
+            $table->text('footer')->nullable();
+            $table->integer('VAT')->nullable();
             $table->foreignId('user_id')->constrained('users');
         });
     }

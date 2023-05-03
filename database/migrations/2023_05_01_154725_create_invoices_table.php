@@ -13,18 +13,18 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->string("name");
+            $table->string("name")->nullable();
             $table->string("number");
-            $table->string("provider_name");
-            $table->integer("provider_tax_id");
-            $table->string("provider_lines");
+            $table->string("provider_name")->nullable();
+            $table->integer("provider_tax_id")->nullable();
+            $table->string("provider_lines")->nullable();
             $table->date("issue_date");
             $table->date("due_date");
-            $table->string("po_number");
-            $table->float("subtotal");
-            $table->float("tax");
-            $table->float("total");
-            $table->text("note");
+            $table->string("po_number")->nullable();
+            $table->float("subtotal")->default(0);
+            $table->float("tax")->default(0);
+            $table->float("total")->default(0);
+            $table->text("note")->nullable();
             $table->enum("status", ['draft', 'paid', 'unpaid', 'overdue', 'canceled']);
             $table->foreignId("customer_id")->constrained("customers");
             $table->foreignId('user_id')->constrained('users');

@@ -22,6 +22,7 @@ class CustomerController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * @throws \Exception
      */
     public function store(Request $request)
     {
@@ -39,8 +40,18 @@ class CustomerController extends Controller
             'country' => 'required',
             'province' => '',
             'website' => '',
-            'notes' => ''
+            'notes' => '',
+            'VAT' => 'integer',
+            'footer' => ''
         ]);
+
+        if(!array_key_exists('VAT', $validatedData)) {
+            $validatedData['VAT'] = random_int(0, 100);
+        }
+
+        if(!array_key_exists('footer', $validatedData)) {
+            $validatedData['footer'] = fake()->text();
+        }
 
         $validatedData['user_id'] = $request->user()->id;
 
