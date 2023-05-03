@@ -28,7 +28,9 @@ class AuthController extends Controller
             $tokenResult = $user->createToken('MyAppToken');
             $token = $tokenResult->accessToken;
 
-            return response()->json(['access_token' => $token], 200);
+            return response()
+                ->header('', 'Bearer '.$token)
+                ->json(['access_token' => $token], 200);
         }
 
         return response()->json(['error' => 'Invalid request'], 422);

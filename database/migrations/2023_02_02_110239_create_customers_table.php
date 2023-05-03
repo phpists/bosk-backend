@@ -14,19 +14,19 @@ return new class extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
             $table->string('client_name');
-            $table->string('phone', 20);
-            $table->string('email');
-            $table->string('first_name');
-            $table->string('last_name');
+            $table->string('phone', 20)->nullable();
+            $table->string('email')->nullable();
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
             $table->string('currency');
             $table->string('address_1');
-            $table->string('address_2');
+            $table->string('address_2')->nullable();
             $table->string('city');
             $table->string('postal_code', 18);
             $table->string('country');
-            $table->string('province');
-            $table->string('website');
-            $table->string('notes');
+            $table->string('province')->nullable();
+            $table->string('website')->nullable();
+            $table->string('notes')->nullable();
             $table->foreignId('user_id')->constrained('users');
         });
     }

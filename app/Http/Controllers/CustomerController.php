@@ -27,26 +27,26 @@ class CustomerController extends Controller
     {
         $validatedData = $request->validate([
             'client_name' => 'required',
-            'phone' => 'required|max:20',
-            'email' => 'required|email',
-            'first_name' => 'required',
-            'last_name' => 'required',
+            'phone' => 'max:20',
+            'email' => 'email',
+            'first_name' => '',
+            'last_name' => '',
             'currency' => 'required',
             'address_1' => 'required',
-            'address_2' => 'required',
+            'address_2' => '',
             'city' => 'required',
             'postal_code' => 'required|max:18',
             'country' => 'required',
-            'province' => 'required',
-            'website' => 'required',
-            'notes' => 'required'
+            'province' => '',
+            'website' => '',
+            'notes' => ''
         ]);
 
         $validatedData['user_id'] = $request->user()->id;
 
         $customer = new Customer($validatedData);
 
-        return response()->json($customer, 200);
+        return response()->json($customer, 201);
     }
 
     /**

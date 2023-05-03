@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('/users')->group(function () {
-    Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
-    Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
+    Route::post('/', [\App\Http\Controllers\AuthController::class, 'register']);
+    Route::post('/sign_in', [\App\Http\Controllers\AuthController::class, 'login']);
     Route::middleware('auth:api')->group( function () {
         Route::post('/refresh_token', [\App\Http\Controllers\AuthController::class, 'refresh_token']);
         Route::post('/sign_out', [\App\Http\Controllers\AuthController::class, 'logout']);
@@ -39,8 +39,8 @@ Route::controller(InvoiceController::class)->group(function() {
     Route::get('/invoices_chart', 'invoices_chart');
 });
 
-Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
+//Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::middleware('auth:api')->delete('/sign_out', [\App\Http\Controllers\AuthController::class, 'logout']);
-Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
+//Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
 Route::get('/profile', [\App\Http\Controllers\UserController::class, 'profile']);
 Route::put('/profile', [\App\Http\Controllers\UserController::class, 'update_profile']);
