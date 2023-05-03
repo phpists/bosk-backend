@@ -17,12 +17,18 @@ class UserController extends Controller
 
     public function update_profile(Request $request) {
         $validatedData = $request->validate([
-            'name' => 'string',
-            'tax_id' => 'integer',
-            'address' => 'string'
+            'user.name' => 'string',
+            'user.tax_id' => 'integer',
+            'user.address' => 'string'
         ]);
+        if(!array_key_exists('user', $validatedData)){
+            return response()->json([
+                'status' => false,
+                'message' => 'user key should be provided'
+            ], 422);
+        }
         $user = User::find($request->user()->id);
-        $user->update($validatedData);
+        $user->update($validatedData['user']);
         return response()->json($user);
     }
 }
