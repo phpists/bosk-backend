@@ -32,7 +32,23 @@ class AuthController extends Controller
                 ->json(['access_token' => $token],
                     200, [
                         'Authorization' => 'Bearer '.$token
-                    ]);
+                    ])
+                ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE, PUT, HEAD')
+                ->header('Access-Control-Allow-Origin', '*')
+                ->header('Access-Control-Expose-Headers', 'X-Requested-With, Content-Type, Authorization, Accept, Client-Security-Token, Accept-Encoding, iat, exp, jti')
+                ->header('Access-Control-Max-Age', '7200')
+                ->header('Cache-Control', 'max-age=0, private, must-revalidate')
+                ->header('ETag', 'W/"4f880d9516f99b2a9b3bece71e93e2c1"')
+                ->header('Referrer-Policy', 'strict-origin-when-cross-origin')
+                ->header('Vary', 'Accept')
+                ->header('Vary', 'Origin')
+                ->header('X-Content-Type-Options', 'nosniff')
+                ->header('X-Download-Options', 'noopen')
+                ->header('X-Frame-Options', 'SAMEORIGIN')
+                ->header('X-Permitted-Cross-Domain-Policies', 'none')
+                ->header('X-Request-Id', '840a1320-6c06-4410-8561-fa563e6e64c7')
+                ->header('X-Runtime', '0.299354')
+                ->header('X-XSS-Protection', '0');
         }
 
         return response()->json(['error' => 'Invalid request'], 422);
@@ -72,7 +88,22 @@ class AuthController extends Controller
             ->json(['status' => true, 'message' => 'success'],
                 200, [
                     'Authorization' => 'Bearer '.$token
-                ]);
+                ])->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE, PUT, HEAD')
+            ->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Expose-Headers', 'X-Requested-With, Content-Type, Authorization, Accept, Client-Security-Token, Accept-Encoding, iat, exp, jti')
+            ->header('Access-Control-Max-Age', '7200')
+            ->header('Cache-Control', 'max-age=0, private, must-revalidate')
+            ->header('ETag', 'W/"4f880d9516f99b2a9b3bece71e93e2c1"')
+            ->header('Referrer-Policy', 'strict-origin-when-cross-origin')
+            ->header('Vary', 'Accept')
+            ->header('Vary', 'Origin')
+            ->header('X-Content-Type-Options', 'nosniff')
+            ->header('X-Download-Options', 'noopen')
+            ->header('X-Frame-Options', 'SAMEORIGIN')
+            ->header('X-Permitted-Cross-Domain-Policies', 'none')
+            ->header('X-Request-Id', '840a1320-6c06-4410-8561-fa563e6e64c7')
+            ->header('X-Runtime', '0.299354')
+            ->header('X-XSS-Protection', '0');
     }
 
     public function logout(Request $request) {
