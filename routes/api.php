@@ -24,7 +24,7 @@ Route::controller(CustomerController::class)->group(function() {
 });
 
 Route::middleware('auth:api')->get('/countries', function () {
-   return response()->json(DB::table('countries')->get());
+   return response()->json(DB::table('countries')->select('country_code', 'country_name')->get());
 });
 
 Route::controller(InvoiceController::class)->group(function() {
