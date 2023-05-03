@@ -21,7 +21,8 @@ class InvoiceController extends Controller
      */
     public function index(Request $request)
     {
-        return new InvoiceCollection(Invoice::all()->where('user_id', $request->user()->id));
+        $collection = new InvoiceCollection(Invoice::all()->where('user_id', $request->user()->id));
+        return response()->json($collection);
     }
 
     /**

@@ -24,7 +24,12 @@ Route::controller(CustomerController::class)->group(function() {
 });
 
 Route::middleware('auth:api')->get('/countries', function () {
-   return response()->json(DB::table('countries')->select('country_code', 'country_name')->get());
+    $countries = DB::table('countries')->select('country_code', 'country_name')->get();
+    $country_data = [];
+    foreach ($countries as $country) {
+        $country_data[] = [$country->country_code, $country->country_name];
+    }
+   return response()->json($country_data);
 });
 
 Route::controller(InvoiceController::class)->group(function() {

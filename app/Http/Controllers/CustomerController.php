@@ -45,7 +45,7 @@ class CustomerController extends Controller
         $validatedData['user_id'] = $request->user()->id;
 
         $customer = new Customer($validatedData);
-
+        $customer->save();
         return response()->json($customer, 201);
     }
 

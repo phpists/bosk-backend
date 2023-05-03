@@ -14,11 +14,11 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email', 'exists:users,email'],
-            'password' => ['required'],
+            'user.email' => ['required', 'email', 'exists:users,email'],
+            'user.password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials['user'])) {
             $user = $request->user();
 
             $user->tokens->each(function (Token $token) {
@@ -29,8 +29,10 @@ class AuthController extends Controller
             $token = $tokenResult->accessToken;
 
             return response()
-                ->header('', 'Bearer '.$token)
-                ->json(['access_token' => $token], 200);
+                ->json(['access_token' => $token],
+                    200, [
+                        'Authorization' => 'Bearer '.$token
+                    ]);
         }
 
         return response()->json(['error' => 'Invalid request'], 422);
@@ -53,20 +55,24 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $data = $request->validate([
-            'name' => ['required', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'min:8'],
+            'user.name' => ['required', 'max:255'],
+            'user.email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'user.password' => ['required', 'min:8'],
         ]);
 
-        $data['password'] = Hash::make($data['password']);
+        $data['user']['password'] = Hash::make($data['user']['password']);
 
-        $user = new User($data);
+        $user = new User($data['user']);
 
         $user->save();
 
         $token = $user->createToken('MyAppToken')->accessToken;
 
-        return response()->json(['access_token' => $token], 201);
+        return response()
+            ->json(['status' => true, 'message' => 'success'],
+                200, [
+                    'Authorization' => 'Bearer '.$token
+                ]);
     }
 
     public function logout(Request $request) {

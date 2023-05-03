@@ -25,6 +25,7 @@ class Customer extends Model
         'country',
         'province',
         'website',
-        'notes'
+        'notes',
+        'user_id'
     ];
 }
