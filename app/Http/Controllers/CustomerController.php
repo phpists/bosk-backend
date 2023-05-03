@@ -27,15 +27,15 @@ class CustomerController extends Controller
     {
         $validatedData = $request->validate([
             'client_name' => 'required',
-            'phone' => 'required',
-            'email' => 'required',
+            'phone' => 'required|max:20',
+            'email' => 'required|email',
             'first_name' => 'required',
             'last_name' => 'required',
             'currency' => 'required',
             'address_1' => 'required',
             'address_2' => 'required',
             'city' => 'required',
-            'postal_code' => 'required',
+            'postal_code' => 'required|max:18',
             'country' => 'required',
             'province' => 'required',
             'website' => 'required',
@@ -44,9 +44,9 @@ class CustomerController extends Controller
 
         $validatedData['user_id'] = $request->user()->id;
 
-        DB::table('customers')->insert($validatedData);
+        $customer = new Customer($validatedData);
 
-        return response()->json(null, 200);
+        return response()->json($customer, 200);
     }
 
     /**
@@ -56,7 +56,10 @@ class CustomerController extends Controller
     {
         $customer = DB::table('customers')->where('user_id', $request->user()->id)->find($customer_id);
         if ($customer === null) {
-            return response()->json(null, 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Not found'
+            ], 404);
         }
         return response()->json($customer);
     }
@@ -68,7 +71,10 @@ class CustomerController extends Controller
     {
         $customer = Customer::all()->where('user_id', $request->user()->id)->find($customer_id);
         if ($customer === null) {
-            return response()->json(null, 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Not found'
+            ], 404);
         }
         $columns_list = [
             'client_name',
@@ -87,7 +93,7 @@ class CustomerController extends Controller
             'notes'
         ];
         $customer->update($request->only($columns_list));
-        return response()->json(null, 200);
+        return response()->json($customer, 200);
     }
 
     /**
@@ -97,11 +103,17 @@ class CustomerController extends Controller
     {
         $customer = Customer::all()->where('user_id', $request->user()->id)->find($customer_id);
         if ($customer === null) {
-            return response()->json(null, 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Not found'
+            ], 404);
         }
 
         $customer->delete();
-        return response()->json(null, 200);
+        return response()->json([
+            'status' => true,
+            'message' => 'success'
+        ], 200);
     }
 
     public function count_customers(Request $request) {

@@ -34,10 +34,13 @@ Route::controller(InvoiceController::class)->group(function() {
     Route::put('/invoices/{id}', 'update');
     Route::get('/count_invoices', 'count_invoices');
     Route::put('/change_status/{id}', 'change_status');
-    Route::get('/change_status/{id}', 'change_status');
+    Route::put('/invoice/change_status/{id}', 'change_status');
     Route::get('/invoices_summary', 'invoices_summary');
     Route::get('/invoices_chart', 'invoices_chart');
 });
 
 Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
+Route::middleware('auth:api')->delete('/sign_out', [\App\Http\Controllers\AuthController::class, 'logout']);
 Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
+Route::get('/profile', [\App\Http\Controllers\UserController::class, 'profile']);
+Route::put('/profile', [\App\Http\Controllers\UserController::class, 'update_profile']);

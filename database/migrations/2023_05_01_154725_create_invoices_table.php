@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string("name");
             $table->string("number");
             $table->string("provider_name");
-            $table->string("provider_tax_id");
+            $table->integer("provider_tax_id");
             $table->string("provider_lines");
             $table->date("issue_date");
             $table->date("due_date");
@@ -24,8 +24,8 @@ return new class extends Migration
             $table->float("subtotal");
             $table->float("tax");
             $table->float("total");
-            $table->string("note");
-            $table->string("status");
+            $table->text("note");
+            $table->enum("status", ['draft', 'paid', 'unpaid', 'overdue', 'canceled']);
             $table->foreignId("customer_id")->constrained("customers");
             $table->foreignId('user_id')->constrained('users');
         });

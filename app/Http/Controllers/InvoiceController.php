@@ -8,6 +8,7 @@ use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class InvoiceController extends Controller
 {
@@ -32,7 +33,7 @@ class InvoiceController extends Controller
             'name' => 'required',
             'number' => 'required',
             'provider_name' => 'required',
-            'provider_tax_id' => 'required',
+            'provider_tax_id' => 'required|integer',
             'provider_lines' => 'required',
             'issue_date' => 'required',
             'due_date' => 'required',
@@ -41,7 +42,7 @@ class InvoiceController extends Controller
             'tax' => 'required|nullable',
             'total' => 'required',
             'note' => 'required',
-            'status' => '',
+            'status' => [Rule::in(['paid', 'unpaid', 'draft', 'canceled', 'overdue'])],
             'customer_id' => 'required|exists:customers,id',
             'invoice_items' => 'required|array'
         ]);
@@ -66,7 +67,7 @@ class InvoiceController extends Controller
 
         DB::table('invoice_items')->insert($invoice_items);
 
-        return response()->json(null, 200);
+        return new InvoiceResource($invoice);
     }
 
     /**
@@ -76,7 +77,10 @@ class InvoiceController extends Controller
     {
         $invoice = Invoice::where('user_id', $request->user()->id)->find($invoice_id);
         if ($invoice === null) {
-            return response()->json(null, 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Not found'
+            ], 404);
         }
 
         return new InvoiceResource($invoice);
@@ -96,21 +100,21 @@ class InvoiceController extends Controller
             'name' => '',
             'number' => '',
             'provider_name' => '',
-            'provider_tax_id' => '',
+            'provider_tax_id' => 'integer',
             'provider_lines' => '',
-            'issue_date' => '',
-            'due_date' => '',
+            'issue_date' => 'date',
+            'due_date' => 'date',
             'po_number' => '',
-            'subtotal' => '',
-            'tax' => 'nullable',
-            'total' => '',
+            'subtotal' => 'numeric',
+            'tax' => 'nullable|numeric',
+            'total' => 'numeric',
             'note' => '',
             'customer_id' => 'exists:customers,id'
         ]);
 
         $invoice->update($validatedData);
 
-        return response()->json();
+        return response()->json($invoice);
     }
 
     /**
@@ -120,7 +124,10 @@ class InvoiceController extends Controller
     {
         $invoice = Invoice::all()->where('user_id', $request->user()->id)->find($invoice_id);
         if ($invoice === null) {
-            return response()->json(null, 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Not found'
+            ], 404);
         }
         $invoice->delete();
         return response()->json(null, 201);
@@ -129,13 +136,28 @@ class InvoiceController extends Controller
     public function change_status(Request $request, int $invoice_id) {
         $invoice = Invoice::all()->where('user_id', $request->user()->id)->find($invoice_id);
         if ($invoice === null) {
-            return response()->json(null, 404);
+            return response()->json([
+                'status' => false,
+                'message' => 'Not found'
+            ], 404);
         }
         $status = $request->query('status', null);
-        if ($status !== 'null') {
+        if ($status === null) {
+            return response()->json([
+                'status' => false,
+                'message' => "status parameter should be provide"
+            ], 422);
+        }
+        if (in_array($status, ['draft', 'paid', 'unpaid', 'overdue', 'canceled'])) {
             $invoice->update(['status' => $status]);
         }
-        return response()->json(null, 200);
+        else {
+            return response()->json([
+                'status' => false,
+                'message' => "Status should be one of the following: draft, paid, unpaid, overdue, canceled"
+            ], 422);
+        }
+        return response()->json($invoice, 200);
     }
 
     public function count_invoices(Request $request) {
