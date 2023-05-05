@@ -22,21 +22,7 @@ class InvoiceController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->query('paginatePer', 50);
-        $page = $request->query('paginatePage', 1);
-        if (gettype($per_page) !== 'integer') {
-            return response()->json([
-                'status' => false,
-                'message' => "paginatePer parameter should be integer"
-            ], 422);
-        }
-        if (gettype($page) !== 'integer') {
-            return response()->json([
-                'status' => false,
-                'message' => "paginatePage parameter should be integer"
-            ], 422);
-        }
-        $invoices = Invoice::all()->where('user_id', $request->user()->id)->skip();
+        $invoices = Invoice::all()->where('user_id', $request->user()->id);
         $collection = new InvoiceCollection($invoices);
         return response()->json($collection);
     }

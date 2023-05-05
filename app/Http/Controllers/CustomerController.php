@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +18,20 @@ class CustomerController extends Controller
      */
     public function index(Request $request)
     {
-        return response()->json(DB::table('customers')->where('user_id', $request->user()->id)->get());
+        try {
+            $per_page = (int)$request->query('paginatePer', 50);
+            $page = (int)$request->query('paginatePage', 1);
+        }
+        catch (\Error $error) {
+            return response()->json([
+                'status' => false,
+                'message' => "paginatePer and paginatePage parameters should be integer"
+            ], 422);
+        }
+        $users = DB::table('customers')->where('user_id', $request->user()->id)
+            ->offset(($page - 1) * $per_page)
+            ->limit($per_page)->get();
+        return response()->json($users);
     }
 
     /**
