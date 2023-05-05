@@ -42,6 +42,8 @@ Route::controller(InvoiceController::class)->group(function() {
     Route::put('/invoice/change_status/{id}', 'change_status');
     Route::get('/invoices_summary', 'invoices_summary');
     Route::get('/invoices_chart', 'invoices_chart');
+    Route::get('/invoices_advise', 'invoices_advice');
+    Route::get('/invoice_pdf/{id}', 'invoice_pdf');
 });
 
 //Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);

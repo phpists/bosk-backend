@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('website')->nullable();
             $table->string('notes')->nullable();
             $table->text('footer')->nullable();
-            $table->integer('VAT')->nullable();
+            $table->integer('VAT')->default(0);
             $table->foreignId('user_id')->constrained('users');
         });
     }

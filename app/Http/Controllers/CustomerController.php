@@ -29,7 +29,7 @@ class CustomerController extends Controller
         $validatedData = $request->validate([
             'client_name' => 'required',
             'phone' => 'max:20',
-            'email' => 'email',
+            'email' => '',
             'first_name' => '',
             'last_name' => '',
             'currency' => 'required',

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Mpdf\Mpdf;
 
 class InvoiceController extends Controller
 {
@@ -21,7 +22,22 @@ class InvoiceController extends Controller
      */
     public function index(Request $request)
     {
-        $collection = new InvoiceCollection(Invoice::all()->where('user_id', $request->user()->id));
+        $per_page = $request->query('paginatePer', 50);
+        $page = $request->query('paginatePage', 1);
+        if (gettype($per_page) !== 'integer') {
+            return response()->json([
+                'status' => false,
+                'message' => "paginatePer parameter should be integer"
+            ], 422);
+        }
+        if (gettype($page) !== 'integer') {
+            return response()->json([
+                'status' => false,
+                'message' => "paginatePage parameter should be integer"
+            ], 422);
+        }
+        $invoices = Invoice::all()->where('user_id', $request->user()->id)->skip();
+        $collection = new InvoiceCollection($invoices);
         return response()->json($collection);
     }
 
@@ -31,21 +47,21 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required',
+            'name' => '',
             'number' => 'required',
-            'provider_name' => 'required',
-            'provider_tax_id' => 'required|integer',
-            'provider_lines' => 'required',
+            'provider_name' => '',
+            'provider_tax_id' => '',
+            'provider_lines' => '',
             'issue_date' => 'required',
             'due_date' => 'required',
-            'po_number' => 'required',
-            'subtotal' => 'required',
-            'tax' => 'required|nullable',
-            'total' => 'required',
-            'note' => 'required',
+            'po_number' => '',
+            'subtotal' => '',
+            'tax' => '',
+            'total' => '',
+            'note' => '',
             'status' => [Rule::in(['paid', 'unpaid', 'draft', 'canceled', 'overdue'])],
             'customer_id' => 'required|exists:customers,id',
-            'invoice_items' => 'required|array'
+            'invoice_items' => ''
         ]);
 
         if (!array_key_exists('status', $validatedData)) {
@@ -54,9 +70,11 @@ class InvoiceController extends Controller
 
         $validatedData['user_id'] = $request->user()->id;
 
-        $invoice_items = $validatedData['invoice_items'];
+        if (array_key_exists('invoice_items', $validatedData)) {
+            $invoice_items = $validatedData['invoice_items'];
 
-        unset($validatedData['invoice_items']);
+            unset($validatedData['invoice_items']);
+        }
 
         $invoice = new Invoice($validatedData);
 
@@ -190,5 +208,35 @@ class InvoiceController extends Controller
             $new_summary[$stat->dt] = $stat->total;
         }
         return response()->json($new_summary);
+    }
+
+    public function invoices_advice(Request $request) {
+        $country_code = $request->query('country_code', null);
+        if ($country_code === null) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Country code parameter should be provided'
+            ], 422);
+        }
+        return response()->json(DB::table('customers')->select(['VAT', 'footer'])->first());
+    }
+
+    public function invoice_pdf(Request $request, int $id) {
+        $invoice = Invoice::all()->where('user_id', $request->user()->id)->find($id);
+        if ($invoice === null) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Not found'
+            ], 404);
+        }
+        $html = view('invoice', [
+            'invoice' => $invoice
+        ]);
+        $mpdf = new Mpdf();
+
+        // Generate PDF from HTML
+        $mpdf->WriteHTML($html);
+        $mpdf->Output();
+        exit;
     }
 }
