@@ -21,6 +21,12 @@ class CustomerController extends Controller
         try {
             $per_page = (int)$request->query('paginatePer', 50);
             $page = (int)$request->query('paginatePage', 1);
+            if ($page < 1) {
+                return response()->json([
+                    'status' => false,
+                    'message' => "paginatePage parameter should be bigger than 0"
+                ], 422);
+            }
         }
         catch (\Error $error) {
             return response()->json([
