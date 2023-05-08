@@ -58,26 +58,24 @@
         <td style="padding: 10px 6px;box-sizing: border-box;font-size: 16px;border-bottom: 1px solid #aaa">Price per item</td>
         <td style="padding: 10px 6px;box-sizing: border-box;font-size: 16px;border-bottom: 1px solid #aaa">Amount</td>
     </tr>
-    @isset($invoice->invoice_items)
-        @foreach($invoice->invoice_items as $invoice_items)
+        @foreach($invoice->invoice_items as $invoice_item)
             <tr style="box-sizing: border-box;">
                 <td style="padding: 10px 6px;box-sizing: border-box;font-size: 16px;border-bottom: 1px solid #aaa">
-                    {{$invoice_items->name}}</td>
+                    {{$invoice_item->name}}</td>
                 <td style="padding: 10px 6px;box-sizing: border-box;font-size: 16px;border-bottom: 1px solid #aaa">
-                    {{$invoice_items->quantity}}
+                    {{$invoice_item->quantity}}
                 </td>
                 <td style="padding: 10px 6px;box-sizing: border-box;font-size: 16px;border-bottom: 1px solid #aaa">
-                    {{$invoice_items->unit}}
+                    {{$invoice_item->unit}}
                 </td>
                 <td style="padding: 10px 6px;box-sizing: border-box;font-size: 16px;border-bottom: 1px solid #aaa">
-                    {{$invoice_items->price}}
+                    {{$invoice_item->price}}
                 </td>
                 <td style="padding: 10px 6px;box-sizing: border-box;font-size: 16px;border-bottom: 1px solid #aaa">
-                    {{$invoice_items->amount}}
+                    {{$invoice_item->amount}}
                 </td>
             </tr>
         @endforeach
-    @endisset
 </table>
 <div style="margin-right: 0; margin-top: 40px; width: 200px; float: right;font-family: sans-serif">
     <span style="float: left;font-size: 20px;">Subtotal:</span>

@@ -59,7 +59,7 @@ class InvoiceController extends Controller
             $invoice_items = $validatedData['invoice_items'];
 
             foreach ($invoice_items as $index=>$invoice_item) {
-                $invoice_items[$index]['invoice_id'] = $invoice->id;
+                $invoice_items[$index]['invoice_id'] = $invoice_item->id;
             }
 
             DB::table('invoice_items')->insert($invoice_items);
