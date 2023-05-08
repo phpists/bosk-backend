@@ -7,7 +7,6 @@ use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Mpdf\Mpdf;
 
@@ -59,20 +58,20 @@ class InvoiceController extends Controller
         if (array_key_exists('invoice_items', $validatedData)) {
             $invoice_items = $validatedData['invoice_items'];
 
+            foreach ($invoice_items as $index=>$invoice_item) {
+                $invoice_items[$index]['invoice_id'] = $invoice->id;
+            }
+
+            DB::table('invoice_items')->insert($invoice_items);
+
             unset($validatedData['invoice_items']);
         }
 
         $invoice = new Invoice($validatedData);
 
         $invoice->save();
-
-        foreach ($invoice_items as $index=>$invoice_item) {
-            $invoice_items[$index]['invoice_id'] = $invoice->id;
-        }
-
-        DB::table('invoice_items')->insert($invoice_items);
-
-        return new InvoiceResource($invoice);
+        $resource = new InvoiceResource($invoice);
+        return response()->json($resource);
     }
 
     /**
@@ -205,24 +204,5 @@ class InvoiceController extends Controller
             ], 422);
         }
         return response()->json(DB::table('customers')->select(['VAT', 'footer'])->first());
-    }
-
-    public function invoice_pdf(Request $request, int $id) {
-        $invoice = Invoice::all()->where('user_id', $request->user()->id)->find($id);
-        if ($invoice === null) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Not found'
-            ], 404);
-        }
-        $html = view('invoice', [
-            'invoice' => $invoice
-        ]);
-        $mpdf = new Mpdf();
-
-        // Generate PDF from HTML
-        $mpdf->WriteHTML($html);
-        $mpdf->Output();
-        exit;
     }
 }

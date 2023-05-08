@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\InvoiceController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -43,11 +42,12 @@ Route::controller(InvoiceController::class)->group(function() {
     Route::get('/invoices_summary', 'invoices_summary');
     Route::get('/invoices_chart', 'invoices_chart');
     Route::get('/invoices_advise', 'invoices_advice');
-    Route::get('/invoice_pdf/{id}', 'invoice_pdf');
+//    Route::get('/invoice_pdf/{id}', 'invoice_pdf');
 });
 
 //Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
 Route::middleware('auth:api')->delete('/sign_out', [\App\Http\Controllers\AuthController::class, 'logout']);
 //Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
+Route::get('/invoice_pdf/{id}', [\App\Http\Controllers\InvoicePdfController::class, 'invoice_pdf']);
 Route::get('/profile', [\App\Http\Controllers\UserController::class, 'profile']);
 Route::put('/profile', [\App\Http\Controllers\UserController::class, 'update_profile']);
