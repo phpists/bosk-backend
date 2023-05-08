@@ -29,7 +29,7 @@ class InvoiceResource extends JsonResource
             'total' => $this->total,
             'note' => $this->note,
             'customer_id' => $this->customer_id,
-            'invoice_items' => InvoiceItemResource::collection($this->invoice_items),
+            'invoice_items_attributes' => InvoiceItemResource::collection($this->invoice_items),
             'status' => $this->status
         ];
     }
