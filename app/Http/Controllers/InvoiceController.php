@@ -86,8 +86,8 @@ class InvoiceController extends Controller
                 'message' => 'Not found'
             ], 404);
         }
-
-        return new InvoiceResource($invoice);
+        $resource = new InvoiceResource($invoice);
+        return response()->json($resource);
     }
 
 
