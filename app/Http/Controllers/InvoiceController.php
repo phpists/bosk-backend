@@ -46,7 +46,7 @@ class InvoiceController extends Controller
             'note' => '',
             'status' => [Rule::in(['paid', 'unpaid', 'draft', 'canceled', 'overdue'])],
             'customer_id' => 'required|exists:customers,id',
-            'invoice_items' => ''
+            'invoice_items_attributes' => ''
         ]);
 
         if (!array_key_exists('status', $validatedData)) {
@@ -55,21 +55,24 @@ class InvoiceController extends Controller
 
         $validatedData['user_id'] = $request->user()->id;
 
-        if (array_key_exists('invoice_items', $validatedData)) {
-            $invoice_items = $validatedData['invoice_items'];
+        $invoice_items = [];
 
-            foreach ($invoice_items as $index=>$invoice_item) {
-                $invoice_items[$index]['invoice_id'] = $invoice_item->id;
-            }
+        if (array_key_exists('invoice_items_attributes', $validatedData)) {
+            $invoice_items = $validatedData['invoice_items_attributes'];
 
-            DB::table('invoice_items')->insert($invoice_items);
-
-            unset($validatedData['invoice_items']);
+            unset($validatedData['invoice_items_attributes']);
         }
 
         $invoice = new Invoice($validatedData);
 
         $invoice->save();
+
+        foreach ($invoice_items as $index=>$invoice_item) {
+            $invoice_items[$index]['invoice_id'] = $invoice->id;
+        }
+
+        DB::table('invoice_items')->insert($invoice_items);
+
         $resource = new InvoiceResource($invoice);
         return response()->json($resource);
     }
